@@ -34,7 +34,7 @@ export default function Products() {
                     products: response.data
                   }))
                 }
-                if(!Product){
+                if(!Product.products || Product.products.length === 0){
                     alert("no product found")
                 }
              } catch (error) {
