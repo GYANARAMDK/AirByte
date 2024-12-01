@@ -2,8 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 
 const initialState=({
-         UserInfo: {name:'',email:'',address:'',phone:'',password:''},
-         IsloggedIn:true,
+         UserInfo: {name:'',phone:'',email:"",address:""},
+         IsloggedIn:false,
          AuthToken:null
 
 })
@@ -25,7 +25,7 @@ const UserSlice =createSlice({
             state.IsloggedIn=false
         },
         UpdateUser:(state,action)=>{
-            state.UserInfo=({...state.UserInfo,...action.payload})
+            state.UserInfo=({...state.UserInfo,...action.payload.UserInfo})
         }
         
     }

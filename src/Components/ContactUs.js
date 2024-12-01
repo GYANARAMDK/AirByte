@@ -11,7 +11,7 @@ export default function ContactUs() {
   return (
     <div>
       <div className='flex justify-center items-center relative top-2 gap-4'>
-        <h1 className='text-2xl bg-yellow-400 p-2 rounded'>AirByte</h1>
+        <h1 className='text-2xl bg-blue-400 p-2 rounded'>AirByte</h1>
       </div>
       <div className='  flex relative top-5 left-[37vw] h-[72vh] w-[25vw]  rounded border border-black flex-col p-4 gap-6'>
       <button className='absolute top-2 right-2 ' onClick={()=>{Navigate('/AirByte')}}><FaTimes/></button>
@@ -33,7 +33,7 @@ export default function ContactUs() {
 
         </div>
        
-        <button className='bg-yellow-400 rounded h-10'onClick={NumberVerifyHandle}>
+        <button className='bg-blue-400 rounded h-10'onClick={NumberVerifyHandle}>
          submit
         </button>
       </div>
