@@ -64,9 +64,66 @@ export default function Cart() {
     })();
   }, [refreshcart])
 
+  const Handleorders = async () => {
+    try {
+      const createOrderResponse = await axios.post('https://airbytebackend.onrender.com/user/orders', {
+        shippingAddress: '123 Street, City', //(1)
+      });
+      if (!createOrderResponse.data.success) {
+        alert('Failed to create the order. Please try again.');
+        return;
+      }
+      const order = createOrderResponse.data.razorpayorder; // Backend-created Razorpay order
+      console.log('Order created successfully:', order);
+      const openRazorpayCheckout = () => {
+        return new Promise((resolve, reject) => {
+          const options = {
+            key: 'YOUR_RAZORPAY_KEY', // Replace with your Razorpay key
+            amount: order.amount, // Amount in paise (e.g., ₹500 = 50000)
+            currency: 'INR',
+            name: 'Your Company Name',
+            description: 'Order Payment',
+            order_id: order.id, // Razorpay order ID
+            handler: (response) => {
+              resolve(response); // Resolve with payment response
+            },
+            prefill: {
+              name: 'Customer Name',
+              email: 'customer@example.com',
+              contact: '9999999999',
+            },
+            theme: {
+              color: '#3399cc',
+            },
+          };
+          const razorpayInstance = new window.Razorpay(options);
+          razorpayInstance.open();
+          razorpayInstance.on('payment.failed', (error) => {
+            reject(error);
+          });
+        });
+      };
+      const paymentResponse = await openRazorpayCheckout();
+      console.log('Payment successful:', paymentResponse);
 
+      const verifyPaymentResponse = await axios.post('https://airbytebackend.onrender.com/user/orders/verify', {   
+        razorpay_order_id: paymentResponse.razorpay_order_id,
+        razorpay_payment_id: paymentResponse.razorpay_payment_id,  //(3)
+        razorpay_signature: paymentResponse.razorpay_signature,
+      });
+      if (verifyPaymentResponse.data.success) {
+        alert('Order placed successfully!');
+        console.log('Verified order details:', verifyPaymentResponse.data.order);
+      } else {
+        alert('Payment verification failed.');
+      }
+    } catch (error) {
+      console.error('Error handling the order process:', error);
+      alert('Something went wrong during the order process. Please try again.');
+    }
+  }
 
-  const handlenegativeclick = async(e) => {
+  const handlenegativeclick = async (e) => {
     e.preventDefault();
     const productId = e.currentTarget.getAttribute('data-id');
     const quantity = e.currentTarget.getAttribute('data-quantity') - 1;
@@ -188,7 +245,8 @@ export default function Cart() {
             <span>Total:</span>
             <span>{`$${(totalPrice * 1.1).toFixed(2)}`}</span>
           </p>
-          <button className="mt-4 w-full bg-blue-400 text-white py-2 rounded hover:bg-blue-500">
+          <button className="mt-4 w-full bg-blue-400 text-white py-2 rounded hover:bg-blue-500"
+            onClick={Handleorders}>
             Proceed to Checkout
           </button>
         </div>
