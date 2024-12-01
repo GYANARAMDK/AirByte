@@ -4,7 +4,7 @@ import Header from './Header'
 import Footer from './Footer'
 import axios from 'axios'
 import { SetProducts } from '../Redux/ProductSlice'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 
 export default function Products() {
   const Dispatch = useDispatch()
@@ -12,29 +12,53 @@ export default function Products() {
   const Navigate = useNavigate();
   const Product = useSelector((state) => state.Product)
   const [FilterCriteria, setFilterCriteria] = useState('All');
-
+  const Location = useLocation();
+  const SearchParams = new URLSearchParams(Location.search);
+  const keyword = SearchParams.get('search')
 
 
   useEffect(() => {
-    if (!token) { 
-      alert("please login in")
-      Navigate( '/login', {state:{from:'/Products'}}, )
-    }else{
-      console.log(token)
-    }
     async function fetchproduct(params) {
-      const response = await axios.get('https://airbytebackend.onrender.com/products/')
-      if (response.status === 200) {
+      if (keyword) {
+             try {
+               const response=await axios.get('https://airbytebackend.onrender.com/products/search',
+                {
+                  params:{
+                    keyword,
+                  }
+                })
+                console.log(response.data);
+                if (response.status === 200) {
 
-        Dispatch(SetProducts({
-          products: response.data.product
-        }))
+                  Dispatch(SetProducts({
+                    products: response.data
+                  }))
+                }
+                if(!Product){
+                    alert("no product found")
+                }
+             } catch (error) {
+               console.log(error);
+               if(error.response) console.log(error.response.data.message)
+             }
+            
+          
+         console.log(keyword);
+       }
+      else {
+        const response = await axios.get('https://airbytebackend.onrender.com/products/')
+        if (response.status === 200) {
+
+          Dispatch(SetProducts({
+            products: response.data.product
+          }))
+        }
+
       }
-
     }
 
     fetchproduct();
-  }, [])
+  }, [keyword])
   const filterproducts = useMemo(() => {
     if (!Product.products) return [];
     if (FilterCriteria === "All") {
@@ -55,15 +79,20 @@ export default function Products() {
 
   const HandleAddToCart = async (e) => {
     e.preventDefault();
-    
-    const productId=e.currentTarget.getAttribute("data-id")
-    const price=e.currentTarget.getAttribute('data-price')
-    const quantity=1
+    if (!token) {
+      alert("please login in")
+      Navigate('/login', { state: { from: '/Products' } },)
+    } else {
+      console.log(token)
+    }
+    const productId = e.currentTarget.getAttribute("data-id")
+    const price = e.currentTarget.getAttribute('data-price')
+    const quantity = 1
     try {
       const response = await axios.post(
         'https://airbytebackend.onrender.com/user/cart/add',
-        {  productId, quantity, price },
-        { headers: { Authorization: `Bearer ${token}` } } 
+        { productId, quantity, price },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (response.status === 200) {
@@ -71,11 +100,11 @@ export default function Products() {
       }
     } catch (error) {
       console.error("Error adding product to cart:", error);
-      if(error.response) console.log(error.response.data.message);
+      if (error.response) console.log(error.response.data.message);
     }
   }
 
-  
+
   return (
     <div>
       <Header />

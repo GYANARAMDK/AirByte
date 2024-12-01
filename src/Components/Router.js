@@ -9,6 +9,7 @@ import Profile from './Profile'
 import ProductDetails from './ProductDetails'
 import Login from './Login'
 import SignUp from './SignUp'
+
 export default function Router() {
   return (
     <div>
@@ -24,6 +25,7 @@ export default function Router() {
             <Route path='/Cart' element={<Cart/>}></Route>
             <Route path='/ContactUs' element={<ContactUs/>}></Route>
             <Route path='/MyOrders' element={<MyOrder/>}></Route>
+            <Route path='/products/:query' element={<Products/>}></Route>
          </Routes>
       </BrowserRouter>
     </div>

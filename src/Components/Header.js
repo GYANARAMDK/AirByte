@@ -5,10 +5,16 @@ import { MdShoppingCart } from 'react-icons/md';
 import { useNavigate } from 'react-router';
 
 import '../App.css'
+import { useState } from 'react';
 export default function Header() {
     const Navigate = useNavigate();
+    const [inputsearch,setinputsearch]=useState();
     const SearchHandle=()=>{
-
+         if(!inputsearch || !inputsearch.trim())
+            alert("please enter search")
+         else 
+         Navigate(`/products/?search=${inputsearch.trim()}`);
+         
     }
     return (
         <div className=' flex justify-around items-center bg-white  text-black  text-xl w-full h-12 border'>
@@ -25,7 +31,9 @@ export default function Header() {
 
             <div className=' flex  items-center justify-evenly  '>
                 <div className='  flex items-center border-2 rounded  '>
-                    <input type="text" placeholder='search products' className='text-black ' />
+                    <input type="text" placeholder='search products' className='text-black '
+                    value={inputsearch}  
+                    onChange={(e)=>{setinputsearch(e.target.value)}}/>
                     <button className='px-1'
                     onClick={SearchHandle}>
                         <FaSearch />
