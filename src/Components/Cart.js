@@ -12,6 +12,7 @@ export default function Cart() {
   const Dispatch = useDispatch();
  
   const [refreshcart, setrefreshcart] = useState(false);
+  const [carts,setcarts]=useState([])
   const token = useSelector(state => state.User.AuthToken)
   const cart = useSelector(state => state.Cart.CartProducts)
   const totalPrice = cart.reduce(
@@ -196,7 +197,9 @@ export default function Cart() {
         if (response.status === 200) {
           Dispatch(SetCartProdutcs({
             cartproducts: await response.data.cart || []
+            
           }))
+          setcarts(response.data.cart);
         }
         console.log(cart)
       } catch (error) {
@@ -212,10 +215,10 @@ export default function Cart() {
         {/* Cart Items Section */}
         <div className="flex-1 border rounded-lg p-4">
           <h2 className="text-2xl font-semibold mb-4">Your Cart</h2>
-          {cart.length === 0 ? (
+          {carts.length === 0 ? (
             <p>Your cart is empty!</p>
           ) : (
-            cart.map((item) => (
+            carts.map((item) => (
               <div
                 key={item.id}
                 className="flex items-center gap-4 border-b py-4"
