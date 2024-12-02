@@ -38,36 +38,26 @@ export default function Cart() {
 
   }
 
-  useEffect(() => {
-
-    if (!token) {
-      alert("please login in ")
-      Navigate('/login', { state: { from: '/Cart' } })
-    }
-    (async function fetchdata() {
-      try {
-        const response = await axios.get(
-          'https://airbytebackend.onrender.com/user/cart/get',
-
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        if (response.status === 200) {
-          Dispatch(SetCartProdutcs({
-            cartproducts: await response.data.cart
-          }))
-        }
-        console.log(cart)
-      } catch (error) {
-        alert("something went wrong")
-        if (error.response) console.log(error.response.data.message);
-      }
-    })();
-  }, [refreshcart])
-
+ 
+  const loadRazorpayScript = () => {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+        script.onload = () => resolve(true);
+        script.onerror = () => reject(false);
+        document.body.appendChild(script);
+    });
+};
   const Handleorders = async () => {
     try {
       const createOrderResponse = await axios.post('https://airbytebackend.onrender.com/user/orders', {
-        shippingAddress: '123 Street, City', //(1)
+        shippingAddress: '123 Street, City', 
+        
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (!createOrderResponse.data.success) {
         alert('Failed to create the order. Please try again.');
@@ -75,22 +65,36 @@ export default function Cart() {
       }
       const order = createOrderResponse.data.razorpayorder; // Backend-created Razorpay order
       console.log('Order created successfully:', order);
-      const openRazorpayCheckout = () => {
+      const openRazorpayCheckout = async() => {
+        const scriptLoaded = await loadRazorpayScript();
+
+        if (!scriptLoaded) {
+          alert("Failed to load Razorpay SDK. Are you online?");
+          console.log("hello how are you")
+          return;
+
+        }
+      
+        // Check if Razorpay is available
+        if (typeof window.Razorpay === 'undefined') {
+          alert("Razorpay is not defined. Try reloading the page.");
+          return;
+        }
         return new Promise((resolve, reject) => {
           const options = {
-            key: 'YOUR_RAZORPAY_KEY', // Replace with your Razorpay key
+            key: 'rzp_test_8m1gQ1rh22bmJ9', // Replace with your Razorpay key
             amount: order.amount, // Amount in paise (e.g., ₹500 = 50000)
             currency: 'INR',
-            name: 'Your Company Name',
+            name: 'AirByte',
             description: 'Order Payment',
             order_id: order.id, // Razorpay order ID
             handler: (response) => {
               resolve(response); // Resolve with payment response
             },
             prefill: {
-              name: 'Customer Name',
+              name: 'Gyanaram Name',
               email: 'customer@example.com',
-              contact: '9999999999',
+              contact: '8290970712',
             },
             theme: {
               color: '#3399cc',
@@ -110,6 +114,11 @@ export default function Cart() {
         razorpay_order_id: paymentResponse.razorpay_order_id,
         razorpay_payment_id: paymentResponse.razorpay_payment_id,  //(3)
         razorpay_signature: paymentResponse.razorpay_signature,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (verifyPaymentResponse.data.success) {
         alert('Order placed successfully!');
@@ -117,12 +126,15 @@ export default function Cart() {
       } else {
         alert('Payment verification failed.');
       }
+      Dispatch(SetCartProdutcs({ cartproducts: [] }));
+      // setrefreshcart(!refreshcart);
+
     } catch (error) {
       console.error('Error handling the order process:', error);
       alert('Something went wrong during the order process. Please try again.');
     }
   }
-
+   
   const handlenegativeclick = async (e) => {
     e.preventDefault();
     const productId = e.currentTarget.getAttribute('data-id');
@@ -162,7 +174,31 @@ export default function Cart() {
       if (error.response) console.log(error.response.data.message);
     }
   }
+  useEffect(() => {
 
+    if (!token) {
+      alert("please login in ")
+      Navigate('/login', { state: { from: '/Cart' } })
+    }
+    (async function fetchdata() {
+      try {
+        const response = await axios.get(
+          'https://airbytebackend.onrender.com/user/cart/get',
+
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (response.status === 200) {
+          Dispatch(SetCartProdutcs({
+            cartproducts: await response.data.cart || []
+          }))
+        }
+        console.log(cart)
+      } catch (error) {
+        alert("something went wrong")
+        if (error.response) console.log(error.response.data.message);
+      }
+    })();
+  }, [refreshcart])
   return (
     <div>
 
