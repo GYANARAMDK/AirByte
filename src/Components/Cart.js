@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-
+import Header from './Header';
 import { SetCartProdutcs } from '../Redux/CartSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
@@ -9,7 +9,7 @@ export default function Cart() {
 
   const Navigate = useNavigate();
   const Dispatch = useDispatch();
-  const order=useSelector(state=>state.Order.order)
+ 
   const [refreshcart, setrefreshcart] = useState(false);
   const token = useSelector(state => state.User.AuthToken)
   const cart = useSelector(state => state.Cart.CartProducts)
@@ -205,7 +205,7 @@ export default function Cart() {
   }, [refreshcart])
   return (
     <div>
-
+        <Header/>
       <div className="flex flex-col md:flex-row gap-6 p-6">
         {/* Cart Items Section */}
         <div className="flex-1 border rounded-lg p-4">
