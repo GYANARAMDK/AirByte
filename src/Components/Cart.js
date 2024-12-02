@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Header from './Header';
+import Footer from './Footer';
 import { SetCartProdutcs } from '../Redux/CartSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
@@ -292,6 +293,7 @@ export default function Cart() {
           </button>
         </div>
       </div>
+      <Footer/>
     </div>
   )
 }

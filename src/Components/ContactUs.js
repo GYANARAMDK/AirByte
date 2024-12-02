@@ -1,6 +1,8 @@
 import React from 'react'
 import { useNavigate } from 'react-router'
 import { FaTimes } from 'react-icons/fa';
+import Header from './Header';
+import Footer from './Footer';
 export default function ContactUs() {
   const Navigate=useNavigate();
 
@@ -10,6 +12,7 @@ export default function ContactUs() {
   }
   return (
     <div>
+      <Header/>
       <div className='flex justify-center items-center relative top-2 gap-4'>
         <h1 className='text-2xl bg-blue-400 p-2 rounded'>AirByte</h1>
       </div>
@@ -37,7 +40,7 @@ export default function ContactUs() {
          submit
         </button>
       </div>
-     
+     <Footer/>
     </div>
   )
 }

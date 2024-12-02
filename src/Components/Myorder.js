@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Header from './Header';
 import axios from 'axios'
 import { useSelector } from 'react-redux';
+import Footer from './Footer';
 export default function Myorder() {
    const [order,setorder]=useState([]);
   const token = useSelector(state => state.User.AuthToken)
@@ -89,7 +90,7 @@ export default function Myorder() {
         </div>
       )}
     </div>
-  
+    <Footer/>
     </div>
   )
 }
