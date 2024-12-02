@@ -15,10 +15,13 @@ export default function Cart() {
   const [carts,setcarts]=useState([])
   const token = useSelector(state => state.User.AuthToken)
   const cart = useSelector(state => state.Cart.CartProducts)
-  const totalPrice = cart.reduce(
+  let totalPrice=0;
+  if(carts.length>0){
+     totalPrice = carts.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );
+}
 
   const HandleRemove = async (e) => {
     e.preventDefault();
