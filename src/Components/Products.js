@@ -138,7 +138,7 @@ export default function Products() {
                   <p className='text-lg font-bold '>no Offer</p>
                 </div>
 
-                <p className="text-lg font-bold">{`$${product.current}`}</p>
+                <p className="text-lg font-bold">{`$${product.price}`}</p>
 
                 <button className="mt-4 bg-blue-400 text-white py-2 px-4 rounded hover:bg-blue-500"
                   data-id={product._id}
