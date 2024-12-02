@@ -31,6 +31,7 @@ export default function Cart() {
       if (response.status === 200) {
         console.log("product removed from successfully");
         setrefreshcart(!refreshcart);
+        alert("product removed from cart")
       }
     } catch (error) {
       console.error("Error removed from cart:", error);

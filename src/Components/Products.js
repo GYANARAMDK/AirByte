@@ -96,10 +96,12 @@ export default function Products() {
       );
 
       if (response.status === 200) {
-        console.log("product added to cart successfully");
+       
+        alert("product added to cart successfully")
       }
     } catch (error) {
       console.error("Error adding product to cart:", error);
+      alert("some error accured during ")
       if (error.response) console.log(error.response.data.message);
     }
   }
