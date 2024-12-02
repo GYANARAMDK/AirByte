@@ -4,11 +4,12 @@ import { SetCartProdutcs } from '../Redux/CartSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import { useNavigate } from 'react-router';
-
+import { SetOrder } from '../Redux/OrderSlice';
 export default function Cart() {
 
   const Navigate = useNavigate();
   const Dispatch = useDispatch();
+  const order=useSelector(state=>state.Order.order)
   const [refreshcart, setrefreshcart] = useState(false);
   const token = useSelector(state => state.User.AuthToken)
   const cart = useSelector(state => state.Cart.CartProducts)
@@ -122,10 +123,13 @@ export default function Cart() {
       });
       if (verifyPaymentResponse.data.success) {
         alert('Order placed successfully!');
-        console.log('Verified order details:', verifyPaymentResponse.data.order);
+        // console.log('Verified order details:', verifyPaymentResponse.data.order);
+        Dispatch(SetOrder({orders:verifyPaymentResponse.data.order}))
+        console.log(order);
       } else {
         alert('Payment verification failed.');
       }
+      
       Dispatch(SetCartProdutcs({ cartproducts: [] }));
       // setrefreshcart(!refreshcart);
 
