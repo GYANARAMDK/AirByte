@@ -135,7 +135,7 @@ export default function Products() {
 
                 <div className='flex justify-between'>
                   <p className="text-gray-500 line-through">{product.price}</p>
-                  <p className='text-lg font-bold '>{product.discount}</p>
+                  <p className='text-lg font-bold '>no Offer</p>
                 </div>
 
                 <p className="text-lg font-bold">{`$${product.current}`}</p>
