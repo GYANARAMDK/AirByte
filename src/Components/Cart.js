@@ -153,10 +153,11 @@ export default function Cart() {
       );
       if (response.status === 200) {
         // alert(response.data.message)
-        Dispatch(SetCartProdutcs({
-          cartproducts: await response.data.cart || []
+        // Dispatch(SetCartProdutcs({
+        //   cartproducts: await response.data.cart || []
 
-        }))
+        // }))
+        setrefreshcart(!refreshcart)
       }
     } catch (error) {
       console.error("Error update from cart:", error);
@@ -177,10 +178,11 @@ export default function Cart() {
       );
       if (response.status === 200) {
         // alert(response.data.message)
-        Dispatch(SetCartProdutcs({
-          cartproducts: await response.data.cart || []
+        // Dispatch(SetCartProdutcs({
+        //   cartproducts: await response.data.cart || []
 
-        }))
+        // }))
+        setrefreshcart(!refreshcart)
       }
     } catch (error) {
       console.error("Error update from cart:", error);
@@ -216,7 +218,7 @@ export default function Cart() {
         console.log(error);
       }
     })();
-  }, [token])
+  }, [token,refreshcart])
 
 
 

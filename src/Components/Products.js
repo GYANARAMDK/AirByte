@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useDispatch} from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
 import Header from './Header'
 import Footer from './Footer'
@@ -21,38 +21,38 @@ export default function Products() {
   useEffect(() => {
     async function fetchproduct(params) {
       if (keyword) {
-             try {
-               const response=await axios.get('https://airbytebackend.onrender.com/products/search',
-                {
-                  params:{
-                    keyword,
-                  }
-                })
-                console.log(response.data);
-                if (response.status === 200) {
+        try {
+          const response = await axios.get('https://airbytebackend.onrender.com/products/search',
+            {
+              params: {
+                keyword,
+              }
+            })
+          console.log(response.data);
+          if (response.status === 200) {
 
-                  Dispatch(SetProducts({
-                    products: response.data
-                  }))
-                }
-                if(!Product.products || Product.products.length === 0){
-                    alert("no product found")
-                }
-             } catch (error) {
-               console.log(error);
-               if(error.response) console.log(error.response.data.message)
-             }
-            
-          
-         console.log(keyword);
-       }
+            Dispatch(SetProducts({
+              products: response.data
+            }))
+          }
+          if (!Product.products || Product.products.length === 0) {
+            alert("no product found")
+          }
+        } catch (error) {
+          console.log(error);
+          if (error.response) console.log(error.response.data.message)
+        }
+
+
+        console.log(keyword);
+      }
       else {
         const response = await axios.get('https://airbytebackend.onrender.com/products/')
         if (response.status === 200) {
 
-          // Dispatch(SetProducts({
-          //   products: response.data.product
-          // }))
+          Dispatch(SetProducts({
+            products: response.data.product
+          }))
         }
 
       }
@@ -60,6 +60,7 @@ export default function Products() {
 
     fetchproduct();
   }, [keyword])
+
   const filterproducts = useMemo(() => {
     if (!Product.products) return [];
     if (FilterCriteria === "All") {
@@ -84,26 +85,26 @@ export default function Products() {
       alert("please login in")
       Navigate('/login', { state: { from: '/Products' } },)
     } else {
-      console.log(token)
-    }
-    const productId = e.currentTarget.getAttribute("data-id")
-    const price = e.currentTarget.getAttribute('data-price')
-    const quantity = 1
-    try {
-      const response = await axios.post(
-        'https://airbytebackend.onrender.com/user/cart/add',
-        { productId, quantity, price },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const productId = e.currentTarget.getAttribute("data-id")
+      const price = e.currentTarget.getAttribute('data-price')
+      const quantity = 1
+      try {
+        const response = await axios.post(
+          'https://airbytebackend.onrender.com/user/cart/add',
+          { productId, quantity, price },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
-      if (response.status === 200) {
-       
-        alert("product added to cart successfully")
+        if (response.status === 200) {
+
+          alert(response.data.message)
+        }
+      } catch (error) {
+        console.error(error);
+        alert("some error accured during ")
+        if (error.response) 
+          alert(error.response.data.message);
       }
-    } catch (error) {
-      console.error("Error adding product to cart:", error);
-      alert("some error accured during ")
-      if (error.response) console.log(error.response.data.message);
     }
   }
 
