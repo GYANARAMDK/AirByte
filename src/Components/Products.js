@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch} from 'react-redux'
+import { useSelector } from 'react-redux'
 import Header from './Header'
 import Footer from './Footer'
 import axios from 'axios'
@@ -49,9 +50,9 @@ export default function Products() {
         const response = await axios.get('https://airbytebackend.onrender.com/products/')
         if (response.status === 200) {
 
-          Dispatch(SetProducts({
-            products: response.data.product
-          }))
+          // Dispatch(SetProducts({
+          //   products: response.data.product
+          // }))
         }
 
       }

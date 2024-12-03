@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import Header from './Header';
 import Footer from './Footer';
 import { SetCartProdutcs } from '../Redux/CartSlice';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { useNavigate } from 'react-router';
 import { SetOrder } from '../Redux/OrderSlice';
@@ -10,18 +11,10 @@ export default function Cart() {
 
   const Navigate = useNavigate();
   const Dispatch = useDispatch();
- 
   const [refreshcart, setrefreshcart] = useState(false);
-  const [carts,setcarts]=useState([])
   const token = useSelector(state => state.User.AuthToken)
   const cart = useSelector(state => state.Cart.CartProducts)
-  let totalPrice=0;
-  if(carts.length>0){
-     totalPrice = carts.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
-}
+
 
   const HandleRemove = async (e) => {
     e.preventDefault();
@@ -33,46 +26,50 @@ export default function Cart() {
         { productId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      Dispatch(SetCartProdutcs({
+        cartproducts: await response.data.cart || []
+
+      }))
       if (response.status === 200) {
-        console.log("product removed from successfully");
+
         setrefreshcart(!refreshcart);
         alert("product removed from cart")
       }
     } catch (error) {
-      console.error("Error removed from cart:", error);
-      if (error.response) console.log(error.response.data.message);
+
+      if (error.response)
+        alert(error.response.data.message);
+      console.log(error)
     }
 
   }
-
- 
   const loadRazorpayScript = () => {
     return new Promise((resolve, reject) => {
-        const script = document.createElement("script");
-        script.src = "https://checkout.razorpay.com/v1/checkout.js";
-        script.onload = () => resolve(true);
-        script.onerror = () => reject(false);
-        document.body.appendChild(script);
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => reject(false);
+      document.body.appendChild(script);
     });
-};
+  };
   const Handleorders = async () => {
     try {
       const createOrderResponse = await axios.post('https://airbytebackend.onrender.com/user/orders', {
-        shippingAddress: '123 Street, City', 
-        
+        shippingAddress: '123 Street, City',
+
       },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+        {
+          headers: {                                   //  this section create order in database and brind order id from razorpay
+            Authorization: `Bearer ${token}`,
+          },
+        });
       if (!createOrderResponse.data.success) {
         alert('Failed to create the order. Please try again.');
         return;
       }
       const order = createOrderResponse.data.razorpayorder; // Backend-created Razorpay order
       console.log('Order created successfully:', order);
-      const openRazorpayCheckout = async() => {
+      const openRazorpayCheckout = async () => {
         const scriptLoaded = await loadRazorpayScript();
 
         if (!scriptLoaded) {
@@ -81,7 +78,7 @@ export default function Cart() {
           return;
 
         }
-      
+
         // Check if Razorpay is available
         if (typeof window.Razorpay === 'undefined') {
           alert("Razorpay is not defined. Try reloading the page.");
@@ -117,34 +114,33 @@ export default function Cart() {
       const paymentResponse = await openRazorpayCheckout();
       console.log('Payment successful:', paymentResponse);
 
-      const verifyPaymentResponse = await axios.post('https://airbytebackend.onrender.com/user/orders/verify', {   
+      const verifyPaymentResponse = await axios.post('https://airbytebackend.onrender.com/user/orders/verify', {
         razorpay_order_id: paymentResponse.razorpay_order_id,
         razorpay_payment_id: paymentResponse.razorpay_payment_id,  //(3)
         razorpay_signature: paymentResponse.razorpay_signature,
       },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       if (verifyPaymentResponse.data.success) {
         alert('Order placed successfully!');
         // console.log('Verified order details:', verifyPaymentResponse.data.order);
-        Dispatch(SetOrder({orders:verifyPaymentResponse.data.order}))
-        console.log(order);
+        Dispatch(SetOrder({ orders: verifyPaymentResponse.data.order }))
+
       } else {
         alert('Payment verification failed.');
       }
-      
+
       Dispatch(SetCartProdutcs({ cartproducts: [] }));
-      // setrefreshcart(!refreshcart);
+
 
     } catch (error) {
       console.error('Error handling the order process:', error);
       alert('Something went wrong during the order process. Please try again.');
     }
   }
-   
   const handlenegativeclick = async (e) => {
     e.preventDefault();
     const productId = e.currentTarget.getAttribute('data-id');
@@ -156,12 +152,16 @@ export default function Cart() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (response.status === 200) {
-        console.log("product updation successfully");
-        setrefreshcart(!refreshcart);
+        // alert(response.data.message)
+        Dispatch(SetCartProdutcs({
+          cartproducts: await response.data.cart || []
+
+        }))
       }
     } catch (error) {
       console.error("Error update from cart:", error);
-      if (error.response) console.log(error.response.data.message);
+      if (error.response)
+        alert(error.response.data.message);
     }
 
   }
@@ -176,12 +176,15 @@ export default function Cart() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (response.status === 200) {
-        console.log("product updation successfully");
-        setrefreshcart(!refreshcart);
+        // alert(response.data.message)
+        Dispatch(SetCartProdutcs({
+          cartproducts: await response.data.cart || []
+
+        }))
       }
     } catch (error) {
       console.error("Error update from cart:", error);
-      if (error.response) console.log(error.response.data.message);
+      if (error.response) alert(error.response.data.message);
     }
   }
   useEffect(() => {
@@ -197,31 +200,47 @@ export default function Cart() {
 
           { headers: { Authorization: `Bearer ${token}` } }
         );
+
         if (response.status === 200) {
           Dispatch(SetCartProdutcs({
             cartproducts: await response.data.cart || []
-            
+
           }))
-          setcarts(response.data.cart);
+
         }
         console.log(cart)
       } catch (error) {
-        alert("something went wrong")
-        if (error.response) console.log(error.response.data.message);
+        if (error.response) {
+          alert(error.response.data.message)
+        }
+        console.log(error);
       }
     })();
-  }, [refreshcart])
+  }, [token])
+
+
+
+  let totalPrice = 0;
+  if (cart.length > 0) {
+    totalPrice = cart.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+  }
+
+
+
   return (
     <div>
-        <Header/>
+      <Header />
       <div className="flex flex-col md:flex-row gap-6 p-6">
         {/* Cart Items Section */}
         <div className="flex-1 border rounded-lg p-4">
           <h2 className="text-2xl font-semibold mb-4">Your Cart</h2>
-          {carts.length === 0 ? (
+          {cart.length === 0 ? (
             <p>Your cart is empty!</p>
           ) : (
-            carts.map((item) => (
+            cart.map((item) => (
               <div
                 key={item.id}
                 className="flex items-center gap-4 border-b py-4"
@@ -277,29 +296,31 @@ export default function Cart() {
         </div>
 
         {/* Order Summary Section */}
-        <div className="w-full md:w-1/3 border rounded-lg p-4">
-          <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
-          <div className="mb-4">
-            <p className="flex justify-between">
-              <span>Subtotal:</span>
-              <span>{`$${totalPrice.toFixed(2)}`}</span>
+         {cart.length !==0 && (
+          <div className="w-full md:w-1/3 border rounded-lg p-4">
+            <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
+            <div className="mb-4">
+              <p className="flex justify-between">
+                <span>Subtotal:</span>
+                <span>{`$${totalPrice.toFixed(2)}`}</span>
+              </p>
+              <p className="flex justify-between">
+                <span>Tax (10%):</span>
+                <span>{`$${(totalPrice * 0.1).toFixed(2)}`}</span>
+              </p>
+            </div>
+            <p className="flex justify-between font-bold text-lg">
+              <span>Total:</span>
+              <span>{`$${(totalPrice * 1.1).toFixed(2)}`}</span>
             </p>
-            <p className="flex justify-between">
-              <span>Tax (10%):</span>
-              <span>{`$${(totalPrice * 0.1).toFixed(2)}`}</span>
-            </p>
+            <button className="mt-4 w-full bg-blue-400 text-white py-2 rounded hover:bg-blue-500"
+              onClick={Handleorders}>
+              Proceed to Checkout
+            </button>
           </div>
-          <p className="flex justify-between font-bold text-lg">
-            <span>Total:</span>
-            <span>{`$${(totalPrice * 1.1).toFixed(2)}`}</span>
-          </p>
-          <button className="mt-4 w-full bg-blue-400 text-white py-2 rounded hover:bg-blue-500"
-            onClick={Handleorders}>
-            Proceed to Checkout
-          </button>
-        </div>
+        )}
       </div>
-      <Footer/>
+      <Footer />
     </div>
   )
 }
