@@ -23,13 +23,13 @@ export default function Footer() {
                     <a href="https://www.linkedin.com/in/gyanaram-dhaka-1287052b8/">
                         <FaLinkedin className="text-blue-700 w-8 h-8" />
                     </a>
-                    <a href=" loda.com">
+                    <a href="https://www.instagram.com/dgyanaram/">
                         <FaInstagram className="text-pink-600 w-8 h-8" />
                     </a>
-                    <a href="x.com">
+                    <a href="https://x.com/gyanaramdh2">
                         <FaTwitter className="text-blue-400 w-8 h-8" />
                     </a>
-                    <a href="loda.com">
+                    <a href="https://www.facebook.com/gyanaram.dhaka.7">
                         <FaFacebook className="text-blue-600 w-8 h-8" />
                     </a>
                 </div>
