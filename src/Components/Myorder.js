@@ -49,7 +49,7 @@ export default function Myorder() {
             >
               {/* Order Details */}
               <div className="mb-4">
-                <h2 className="text-xl font-semibold mb-2">{`Order #${order._id}`}</h2>
+                <h2 className="text-xl font-semibold mb-2 overflow-hidden">{`Order #${order._id}`}</h2>
                 <p className="text-gray-600">{`Order Date: ${order.orderDate}`}</p>
                 <p className="text-gray-600">{`Total Items: ${order.products.length}`}</p>
                 <p className="text-gray-800 font-bold">{`Total Price: $${order.totalPrice}`}</p>
